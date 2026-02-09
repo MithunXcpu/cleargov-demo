@@ -5,22 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Demo Click Path — Rochester Hills Transparency Portal</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --primary: #1a3a5c;
+    --bg: #06090f;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --surface3: #1c2333;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(0,180,216,0.3);
+    --text: #e6edf3;
+    --text-muted: #7d8590;
     --accent: #00b4d8;
     --accent2: #0077b6;
-    --bg: #0f172a;
-    --surface: #1e293b;
-    --surface2: #334155;
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --border: #334155;
-    --success: #22c55e;
-    --warning: #f59e0b;
-    --danger: #ef4444;
+    --accent-glow: rgba(0,180,216,0.15);
+    --gradient: linear-gradient(135deg, #00b4d8, #0077b6);
+    --success: #2dd4bf;
+    --success-glow: rgba(45,212,191,0.12);
+    --warning: #fbbf24;
+    --warning-glow: rgba(251,191,36,0.1);
+    --danger: #f87171;
+    --danger-glow: rgba(248,113,113,0.1);
   }
 
   body {
@@ -28,20 +34,57 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  .bg-glow {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(0,180,216,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-glow-2 {
+    position: fixed;
+    bottom: -300px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,119,182,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* Header */
   .header {
-    background: linear-gradient(135deg, #0f2439 0%, #1a3a5c 100%);
-    padding: 32px 24px 24px;
-    border-bottom: 1px solid var(--border);
     position: sticky;
     top: 0;
     z-index: 50;
+    background: rgba(13,17,23,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px;
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent);
   }
 
   .header-inner {
-    max-width: 900px;
+    max-width: 960px;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
@@ -51,15 +94,20 @@
   }
 
   .header-left h1 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     letter-spacing: -0.5px;
   }
 
-  .header-left h1 span { color: var(--accent); }
+  .header-left h1 span {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
   .header-left p {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--text-muted);
     margin-top: 4px;
   }
@@ -70,32 +118,54 @@
     align-items: center;
   }
 
+  .back-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.25s;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+    border-color: var(--border-hover);
+    background: var(--accent-glow);
+  }
+
   .timer-display {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 8px 16px;
-    font-size: 20px;
-    font-weight: 700;
+    padding: 8px 18px;
+    font-size: 22px;
+    font-weight: 800;
     font-variant-numeric: tabular-nums;
     color: var(--accent);
-    min-width: 80px;
+    min-width: 86px;
     text-align: center;
+    letter-spacing: -0.5px;
   }
 
   .timer-btn {
-    background: var(--accent2);
+    background: var(--gradient);
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
+    letter-spacing: 0.3px;
   }
 
-  .timer-btn:hover { background: var(--accent); }
+  .timer-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
   .timer-btn.reset {
     background: transparent;
@@ -103,173 +173,259 @@
     color: var(--text-muted);
   }
 
-  .timer-btn.reset:hover { border-color: var(--text-muted); color: var(--text); }
-
-  .back-link {
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+  .timer-btn.reset:hover {
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
   }
 
-  .back-link:hover { text-decoration: underline; }
-
-  /* Progress */
-  .phase-tabs {
-    max-width: 900px;
+  /* Phase Tabs */
+  .phase-tabs-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 16px 24px 0;
+    padding: 20px 24px 0;
+  }
+
+  .phase-tabs {
     display: flex;
-    gap: 4px;
+    gap: 6px;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 5px;
+    border: 1px solid var(--border);
   }
 
   .phase-tab {
     flex: 1;
-    padding: 10px 12px;
+    padding: 12px 14px;
     text-align: center;
     font-size: 12px;
     font-weight: 600;
     color: var(--text-muted);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-bottom: none;
-    border-radius: 8px 8px 0 0;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    position: relative;
   }
 
+  .phase-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+
   .phase-tab.active {
-    background: var(--accent2);
-    color: white;
-    border-color: var(--accent2);
+    background: var(--accent-glow);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,180,216,0.08);
+  }
+
+  .phase-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    right: 25%;
+    height: 2px;
+    background: var(--gradient);
+    border-radius: 2px;
   }
 
   .phase-tab .tab-time {
     display: block;
     font-size: 10px;
     font-weight: 400;
-    margin-top: 2px;
-    opacity: 0.7;
+    margin-top: 3px;
+    opacity: 0.6;
     text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Progress bar */
+  .progress-wrapper {
+    max-width: 960px;
+    margin: 16px auto 0;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 3px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px rgba(0,180,216,0.5);
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    text-align: right;
+    font-weight: 500;
   }
 
   /* Main */
   .main {
-    max-width: 900px;
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
     margin: 0 auto;
-    padding: 0 24px 80px;
+    padding: 0 24px 100px;
   }
 
   /* Phase sections */
-  .phase {
-    display: none;
-  }
-
-  .phase.active {
-    display: block;
-  }
+  .phase { display: none; }
+  .phase.active { display: block; }
 
   /* Step cards */
   .step {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     margin-top: 16px;
     overflow: hidden;
-    transition: all 0.3s;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient);
+    opacity: 0;
+    transition: opacity 0.35s;
   }
 
   .step.current {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 8px 24px rgba(0,180,216,0.1);
+    border-color: var(--border-hover);
+    box-shadow: 0 0 0 1px rgba(0,180,216,0.15), 0 12px 40px -8px rgba(0,180,216,0.1);
+    background: linear-gradient(135deg, rgba(0,180,216,0.03) 0%, var(--surface) 60%);
   }
+
+  .step.current::before { opacity: 1; }
 
   .step.done {
-    opacity: 0.5;
-    border-color: var(--success);
+    opacity: 0.45;
+    border-color: rgba(45,212,191,0.2);
   }
 
-  .step.done .step-header { background: rgba(34,197,94,0.05); }
+  .step.done .step-header { background: rgba(45,212,191,0.03); }
 
   .step-header {
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 16px 20px;
+    padding: 18px 22px;
     cursor: pointer;
     transition: background 0.2s;
   }
 
-  .step-header:hover { background: rgba(255,255,255,0.02); }
+  .step-header:hover { background: rgba(255,255,255,0.015); }
 
   .step-num {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: var(--accent2);
-    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,180,216,0.2);
+    color: var(--accent);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: all 0.3s;
+  }
+
+  .step.current .step-num {
+    background: var(--gradient);
+    border-color: transparent;
+    color: white;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.25);
   }
 
   .step.done .step-num {
-    background: var(--success);
+    background: var(--success-glow);
+    border-color: rgba(45,212,191,0.25);
+    color: var(--success);
   }
 
-  .step.done .step-num::after {
-    content: '\2713';
-  }
-
+  .step.done .step-num::after { content: '\2713'; }
   .step.done .step-num span { display: none; }
 
-  .step-title {
-    flex: 1;
-  }
+  .step-title { flex: 1; }
 
   .step-title h3 {
     font-size: 15px;
     font-weight: 700;
     color: var(--text);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    letter-spacing: -0.2px;
   }
 
   .step-title .step-timing {
     font-size: 12px;
     color: var(--text-muted);
+    font-weight: 400;
   }
 
   .step-action-btn {
-    background: none;
-    border: 1px solid var(--border);
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,180,216,0.2);
     color: var(--accent);
-    border-radius: 6px;
-    padding: 6px 12px;
+    border-radius: 8px;
+    padding: 7px 16px;
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
     flex-shrink: 0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
   }
 
   .step-action-btn:hover {
-    background: var(--accent2);
-    border-color: var(--accent2);
+    background: var(--gradient);
+    border-color: transparent;
     color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,180,216,0.2);
   }
 
   .step-body {
     display: none;
-    padding: 0 20px 20px;
-    padding-left: 66px;
+    padding: 0 22px 22px;
+    padding-left: 72px;
   }
 
   .step.current .step-body,
@@ -279,136 +435,208 @@
 
   /* Talk track */
   .talk-track {
-    background: rgba(0,180,216,0.06);
+    background: rgba(0,180,216,0.04);
     border-left: 3px solid var(--accent);
-    border-radius: 0 8px 8px 0;
-    padding: 14px 18px;
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
     margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .talk-track::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(90deg, rgba(0,180,216,0.04), transparent);
+    pointer-events: none;
   }
 
   .talk-track-label {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     color: var(--accent);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .talk-track-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
   }
 
   .talk-track p {
     font-size: 14px;
-    color: var(--text);
-    line-height: 1.7;
+    color: rgba(230,237,243,0.85);
+    line-height: 1.75;
     font-style: italic;
   }
 
-  .talk-track p + p { margin-top: 10px; }
+  .talk-track p + p { margin-top: 12px; }
 
-  /* Action link */
+  /* Portal link */
   .portal-link {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--accent2);
+    background: var(--gradient);
     color: white;
     text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 10px 22px;
+    border-radius: 10px;
     font-size: 13px;
-    font-weight: 600;
-    transition: all 0.2s;
+    font-weight: 700;
+    transition: all 0.25s;
     margin-top: 8px;
+    letter-spacing: 0.2px;
   }
 
   .portal-link:hover {
-    background: var(--accent);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,180,216,0.2);
   }
-
-  .portal-link .arrow { transition: transform 0.2s; }
-  .portal-link:hover .arrow { transform: translateX(4px); }
 
   /* Data callout */
   .data-callout {
     background: var(--surface2);
-    border-radius: 10px;
-    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
     margin-top: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .data-callout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(251,191,36,0.3), transparent);
   }
 
   .data-callout-label {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     color: var(--warning);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .data-callout-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--warning);
   }
 
   .data-callout ul {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
   }
 
   .data-callout li {
     font-size: 13px;
     color: var(--text-muted);
-    padding-left: 16px;
+    padding-left: 18px;
     position: relative;
+    line-height: 1.5;
   }
 
   .data-callout li::before {
-    content: '>';
+    content: '\203A';
     position: absolute;
     left: 0;
     color: var(--accent);
     font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
   }
 
-  .data-callout li strong {
-    color: var(--text);
-  }
+  .data-callout li strong { color: var(--text); }
 
   /* Navigation tips */
   .nav-tip {
-    background: rgba(245,158,11,0.08);
-    border: 1px solid rgba(245,158,11,0.2);
-    border-radius: 8px;
-    padding: 10px 14px;
+    background: var(--warning-glow);
+    border: 1px solid rgba(251,191,36,0.15);
+    border-radius: 10px;
+    padding: 12px 16px;
     margin-top: 12px;
     font-size: 12px;
-    color: var(--warning);
+    color: rgba(251,191,36,0.9);
     display: flex;
     align-items: flex-start;
-    gap: 8px;
+    gap: 10px;
+    line-height: 1.6;
   }
 
   .nav-tip strong { color: var(--text); }
 
   /* Objection prep */
   .objection-prep {
-    background: rgba(239,68,68,0.06);
-    border: 1px solid rgba(239,68,68,0.15);
-    border-radius: 8px;
-    padding: 12px 16px;
+    background: var(--danger-glow);
+    border: 1px solid rgba(248,113,113,0.12);
+    border-radius: 10px;
+    padding: 14px 18px;
     margin-top: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .objection-prep::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--danger);
+    border-radius: 3px 0 0 3px;
   }
 
   .objection-prep-label {
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     color: var(--danger);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .objection-prep-label::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--danger);
   }
 
   .objection-prep p {
     font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.6;
+    color: rgba(230,237,243,0.7);
+    line-height: 1.65;
   }
 
   .objection-prep p strong { color: var(--text); }
@@ -419,48 +647,63 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--surface);
+    background: rgba(13,17,23,0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-top: 1px solid var(--border);
-    padding: 12px 24px;
+    padding: 14px 24px;
     display: flex;
     justify-content: center;
     gap: 12px;
     z-index: 50;
   }
 
+  .bottom-nav::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,180,216,0.2), transparent);
+  }
+
   .bottom-nav button {
     background: var(--surface2);
     color: var(--text);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 24px;
-    font-size: 14px;
+    border-radius: 10px;
+    padding: 10px 28px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     gap: 8px;
+    font-family: 'Inter', sans-serif;
   }
 
   .bottom-nav button:hover {
-    background: var(--accent2);
-    border-color: var(--accent2);
-    color: white;
+    border-color: var(--border-hover);
+    background: var(--accent-glow);
+    color: var(--accent);
+    transform: translateY(-1px);
   }
 
   .bottom-nav button.primary {
-    background: var(--accent2);
-    border-color: var(--accent2);
+    background: var(--gradient);
+    border-color: transparent;
     color: white;
+    box-shadow: 0 4px 16px rgba(0,180,216,0.2);
   }
 
   .bottom-nav button.primary:hover {
-    background: var(--accent);
-    border-color: var(--accent);
+    box-shadow: 0 8px 28px rgba(0,180,216,0.3);
+    transform: translateY(-2px);
   }
 
-  /* Quick ref sidebar toggle */
+  /* Quick ref sidebar */
   .quick-ref-toggle {
     position: fixed;
     top: 50%;
@@ -469,89 +712,164 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-right: none;
-    border-radius: 8px 0 0 8px;
-    padding: 12px 8px;
+    border-radius: 10px 0 0 10px;
+    padding: 14px 8px;
     writing-mode: vertical-rl;
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 10px;
+    font-weight: 700;
     color: var(--text-muted);
     cursor: pointer;
     z-index: 40;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
+    transition: all 0.25s;
   }
 
-  .quick-ref-toggle:hover { color: var(--accent); }
+  .quick-ref-toggle:hover {
+    color: var(--accent);
+    background: var(--accent-glow);
+    border-color: rgba(0,180,216,0.2);
+  }
 
   .quick-ref {
     position: fixed;
     top: 0;
-    right: -360px;
-    width: 360px;
+    right: -380px;
+    width: 380px;
     height: 100vh;
-    background: var(--surface);
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     border-left: 1px solid var(--border);
     z-index: 60;
-    transition: right 0.3s ease;
+    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
-    padding: 24px;
+    padding: 28px;
   }
 
   .quick-ref.open { right: 0; }
 
   .quick-ref h3 {
-    font-size: 14px;
+    font-size: 11px;
     font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 16px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .quick-ref h3:first-of-type { color: var(--accent); }
+  .quick-ref h3:not(:first-of-type) { color: var(--text-muted); }
+
+  .quick-ref h3::before {
+    content: '';
+    width: 3px;
+    height: 12px;
+    border-radius: 3px;
+    background: var(--gradient);
   }
 
   .quick-ref-close {
     position: absolute;
-    top: 16px;
-    right: 16px;
-    background: none;
-    border: none;
+    top: 20px;
+    right: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
     color: var(--text-muted);
-    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 18px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .quick-ref-close:hover {
+    color: var(--text);
+    border-color: rgba(255,255,255,0.15);
   }
 
   .ref-stat {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
     font-size: 13px;
+    transition: background 0.2s;
   }
 
+  .ref-stat:hover { background: rgba(255,255,255,0.02); margin: 0 -8px; padding: 9px 8px; border-radius: 6px; }
+
   .ref-stat .label { color: var(--text-muted); }
-  .ref-stat .value { color: var(--text); font-weight: 600; }
+  .ref-stat .value { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
 
   .ref-divider {
     height: 1px;
     background: var(--border);
-    margin: 16px 0;
+    margin: 18px 0;
+  }
+
+  /* Keyboard hint */
+  .keyboard-hint {
+    position: fixed;
+    bottom: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 11px;
+    color: var(--text-muted);
+    z-index: 45;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .keyboard-hint:hover { opacity: 1; }
+
+  .keyboard-hint kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-family: 'Inter', monospace;
+    color: var(--text);
+    font-weight: 600;
   }
 
   @media (max-width: 700px) {
     .header-inner { flex-direction: column; align-items: flex-start; }
-    .step-body { padding-left: 20px; }
-    .phase-tabs { overflow-x: auto; }
+    .step-body { padding-left: 22px; }
+    .phase-tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .phase-tab { min-width: 120px; }
     .quick-ref-toggle { display: none; }
+    .keyboard-hint { display: none; }
+    .progress-wrapper { display: none; }
   }
 </style>
 </head>
 <body>
+
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
 
   <!-- Header -->
   <div class="header">
     <div class="header-inner">
       <div class="header-left">
         <h1>Demo <span>Click Path</span></h1>
-        <p>Step-by-step guide with talk track — February 11, 2026 at 3:30 PM ET</p>
+        <p>Step-by-step guide with talk track &mdash; February 11, 2026 at 3:30 PM ET</p>
       </div>
       <div class="header-controls">
         <a href="index.html" class="back-link">&larr; Hub</a>
@@ -563,23 +881,33 @@
   </div>
 
   <!-- Phase Tabs -->
-  <div class="phase-tabs">
-    <div class="phase-tab active" onclick="showPhase(0)">
-      Phase 1: Tell
-      <span class="tab-time">0:00 – 5:00</span>
+  <div class="phase-tabs-wrapper">
+    <div class="phase-tabs">
+      <div class="phase-tab active" onclick="showPhase(0)">
+        Phase 1: Tell
+        <span class="tab-time">0:00 &ndash; 5:00</span>
+      </div>
+      <div class="phase-tab" onclick="showPhase(1)">
+        Phase 2: Show
+        <span class="tab-time">5:00 &ndash; 25:00</span>
+      </div>
+      <div class="phase-tab" onclick="showPhase(2)">
+        Phase 3: Tell
+        <span class="tab-time">25:00 &ndash; 30:00</span>
+      </div>
+      <div class="phase-tab" onclick="showPhase(3)">
+        Q&amp;A
+        <span class="tab-time">30:00 &ndash; 35:00</span>
+      </div>
     </div>
-    <div class="phase-tab" onclick="showPhase(1)">
-      Phase 2: Show
-      <span class="tab-time">5:00 – 25:00</span>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-wrapper">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 8.3%;"></div>
     </div>
-    <div class="phase-tab" onclick="showPhase(2)">
-      Phase 3: Tell
-      <span class="tab-time">25:00 – 30:00</span>
-    </div>
-    <div class="phase-tab" onclick="showPhase(3)">
-      Q&A
-      <span class="tab-time">30:00 – 35:00</span>
-    </div>
+    <div class="progress-label" id="progressLabel">Step 1 of 12</div>
   </div>
 
   <div class="main">
@@ -591,8 +919,8 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>1</span></div>
           <div class="step-title">
-            <h3>Open Slide Deck — Title Slide</h3>
-            <div class="step-timing">0:00 – 1:30 &nbsp;|&nbsp; Share your screen</div>
+            <h3>Open Slide Deck &mdash; Title Slide</h3>
+            <div class="step-timing">0:00 &ndash; 1:30 &nbsp;&bull;&nbsp; Share your screen</div>
           </div>
           <a href="slides.html" target="_blank" class="step-action-btn">Open Slides &rarr;</a>
         </div>
@@ -603,8 +931,8 @@
             <p>"Before we dive in, let me frame the challenge. Rochester Hills is a growing city with a $186 million total budget. You have nearly 80,000 residents, many of whom have very reasonable questions: Where do my tax dollars go? Why did my water bill go up? What's the city investing in long-term?"</p>
           </div>
           <div class="nav-tip">
-            <span>💡</span>
-            <div><strong>Tip:</strong> Look at the camera, not the screen. Make eye contact. Keep energy up. Press N on slides to see speaker notes.</div>
+            <span>&#128161;</span>
+            <div><strong>Tip:</strong> Look at the camera, not the screen. Make eye contact. Keep energy up. Press <kbd>N</kbd> on slides to see speaker notes.</div>
           </div>
         </div>
       </div>
@@ -614,20 +942,20 @@
           <div class="step-num"><span>2</span></div>
           <div class="step-title">
             <h3>Acknowledge Each Persona</h3>
-            <div class="step-timing">1:30 – 3:00 &nbsp;|&nbsp; Still on Title Slide</div>
+            <div class="step-timing">1:30 &ndash; 3:00 &nbsp;&bull;&nbsp; Still on Title Slide</div>
           </div>
         </div>
         <div class="step-body">
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"Council Member — you're fielding constituent calls and need to point people to clear, accessible data rather than 200-page PDF budget books."</p>
-            <p>"Finance Director — you need a tool that takes your existing budget data and makes it public-facing without creating extra work for your staff."</p>
-            <p>"IT Director — you want something cloud-based, low-maintenance, that integrates with your website without ongoing IT overhead."</p>
-            <p>"And for our concerned citizen — you just want to understand where your money goes, and you shouldn't need a finance degree to find out."</p>
+            <p>"Council Member &mdash; you're fielding constituent calls and need to point people to clear, accessible data rather than 200-page PDF budget books."</p>
+            <p>"Finance Director &mdash; you need a tool that takes your existing budget data and makes it public-facing without creating extra work for your staff."</p>
+            <p>"IT Director &mdash; you want something cloud-based, low-maintenance, that integrates with your website without ongoing IT overhead."</p>
+            <p>"And for our concerned citizen &mdash; you just want to understand where your money goes, and you shouldn't need a finance degree to find out."</p>
           </div>
           <div class="nav-tip">
-            <span>💡</span>
-            <div><strong>Tip:</strong> Make brief eye contact with each person as you address their role. Slow down here — this is where you show empathy.</div>
+            <span>&#128161;</span>
+            <div><strong>Tip:</strong> Make brief eye contact with each person as you address their role. Slow down here &mdash; this is where you show empathy.</div>
           </div>
         </div>
       </div>
@@ -637,22 +965,22 @@
           <div class="step-num"><span>3</span></div>
           <div class="step-title">
             <h3>Advance to Agenda Slide &amp; Key Data</h3>
-            <div class="step-timing">3:00 – 5:00 &nbsp;|&nbsp; Slides 2 &amp; 3</div>
+            <div class="step-timing">3:00 &ndash; 5:00 &nbsp;&bull;&nbsp; Slides 2 &amp; 3</div>
           </div>
           <button class="step-action-btn" onclick="event.stopPropagation()">Press &rarr; on slides</button>
         </div>
         <div class="step-body">
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"Here's our agenda today. We'll start with the challenge, then spend the bulk of our time in the live portal exploring real Rochester Hills data — specifically the Water & Sewer Operating Fund and Capital Improvement Projects. Then we'll talk about the value this delivers."</p>
-            <p>[Advance to Slide 3 — Key Data] "Before we go live, here are the headline numbers..."</p>
+            <p>"Here's our agenda today. We'll start with the challenge, then spend the bulk of our time in the live portal exploring real Rochester Hills data &mdash; specifically the Water &amp; Sewer Operating Fund and Capital Improvement Projects. Then we'll talk about the value this delivers."</p>
+            <p>[Advance to Slide 3 &mdash; Key Data] "Before we go live, here are the headline numbers..."</p>
           </div>
           <div class="data-callout">
             <div class="data-callout-label">Key Numbers to Hit</div>
             <ul>
               <li><strong>$186.3M</strong> total city revenue (2026 Adopted)</li>
-              <li><strong>$42.1M</strong> W&S Operating Fund — largest fund, 22.6% of all revenue</li>
-              <li><strong>$342M</strong> 6-Year CIP (2025–2030)</li>
+              <li><strong>$42.1M</strong> W&amp;S Operating Fund &mdash; largest fund, 22.6% of all revenue</li>
+              <li><strong>$342M</strong> 6-Year CIP (2025&ndash;2030)</li>
               <li><strong>~8.7%</strong> avg rate increase effective July 2025</li>
             </ul>
           </div>
@@ -668,8 +996,8 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>4</span></div>
           <div class="step-title">
-            <h3>Switch to Live Portal — Home Overview</h3>
-            <div class="step-timing">5:00 – 8:00 &nbsp;|&nbsp; Portal home page</div>
+            <h3>Switch to Live Portal &mdash; Home Overview</h3>
+            <div class="step-timing">5:00 &ndash; 8:00 &nbsp;&bull;&nbsp; Portal home page</div>
           </div>
           <a href="https://rochesterhills.opendata.report" target="_blank" class="step-action-btn">Open Portal &rarr;</a>
         </div>
@@ -677,7 +1005,7 @@
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
             <p>"Now let me switch to the live portal. This is Rochester Hills' actual Transparency Portal, powered by Gravity. This is what your constituents see when they explore the city's finances."</p>
-            <p>"Notice a few things right away. First, this isn't a static PDF — it's interactive. Citizens can click, filter, and explore on their own. Second, it auto-updates when you update your budget data. Third, it's accessible on any device."</p>
+            <p>"Notice a few things right away. First, this isn't a static PDF &mdash; it's interactive. Citizens can click, filter, and explore on their own. Second, it auto-updates when you update your budget data. Third, it's accessible on any device."</p>
           </div>
           <div class="data-callout">
             <div class="data-callout-label">Point Out on Screen</div>
@@ -695,19 +1023,19 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>5</span></div>
           <div class="step-title">
-            <h3>Navigate to W&S Operating Fund — Revenue</h3>
-            <div class="step-timing">8:00 – 12:00 &nbsp;|&nbsp; Budget Details tab</div>
+            <h3>Navigate to W&amp;S Operating Fund &mdash; Revenue</h3>
+            <div class="step-timing">8:00 &ndash; 12:00 &nbsp;&bull;&nbsp; Budget Details tab</div>
           </div>
         </div>
         <div class="step-body">
           <div class="nav-tip">
-            <span>🖱️</span>
-            <div><strong>Click path:</strong> Budget Details tab &rarr; Fund dropdown &rarr; Select "Water & Sewer Operating Fund" &rarr; Revenue view</div>
+            <span>&#128433;</span>
+            <div><strong>Click path:</strong> Budget Details tab &rarr; Fund dropdown &rarr; Select "Water &amp; Sewer Operating Fund" &rarr; Revenue view</div>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"Let's address the scenario directly. Council members have been hearing from citizens about what's driving water and sewer costs. Let me pull up the Water & Sewer Operating Fund."</p>
-            <p>"This fund brings in $42.1 million in revenue — making it the single LARGEST fund in Rochester Hills, representing 22.6% of all city revenue. Bigger than the General Fund."</p>
+            <p>"Let's address the scenario directly. Council members have been hearing from citizens about what's driving water and sewer costs. Let me pull up the Water &amp; Sewer Operating Fund."</p>
+            <p>"This fund brings in $42.1 million in revenue &mdash; making it the single LARGEST fund in Rochester Hills, representing 22.6% of all city revenue. Bigger than the General Fund."</p>
             <p>"Water Rates at $22.2 million is the biggest slice. Sewer Rates at $16.1 million is next. This is critical context for citizens who wonder 'why is my water bill going up?'"</p>
           </div>
           <div class="data-callout">
@@ -715,12 +1043,12 @@
             <ul>
               <li><strong>Water Revenue:</strong> $24.5M (58% of fund)</li>
               <li><strong>Sewer Revenue:</strong> $17.7M (42% of fund)</li>
-              <li><strong>Water Rates:</strong> $22.2M — 90%+ of water revenue</li>
-              <li><strong>Sewer Rates:</strong> $16.1M — 91% of sewer revenue</li>
+              <li><strong>Water Rates:</strong> $22.2M &mdash; 90%+ of water revenue</li>
+              <li><strong>Sewer Rates:</strong> $16.1M &mdash; 91% of sewer revenue</li>
             </ul>
           </div>
           <div class="nav-tip">
-            <span>💡</span>
+            <span>&#128161;</span>
             <div><strong>Demo move:</strong> Click on the pie chart slice for Water Rates to drill down. Show that citizens can self-serve this detail.</div>
           </div>
         </div>
@@ -730,34 +1058,34 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>6</span></div>
           <div class="step-title">
-            <h3>Toggle to Expenditure View — The Rate Story</h3>
-            <div class="step-timing">12:00 – 16:00 &nbsp;|&nbsp; Same fund, expense view</div>
+            <h3>Toggle to Expenditure View &mdash; The Rate Story</h3>
+            <div class="step-timing">12:00 &ndash; 16:00 &nbsp;&bull;&nbsp; Same fund, expense view</div>
           </div>
         </div>
         <div class="step-body">
           <div class="nav-tip">
-            <span>🖱️</span>
+            <span>&#128433;</span>
             <div><strong>Click path:</strong> Toggle from Revenue to Expenditure view &rarr; Show bar chart</div>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
             <p>"On the expense side, the fund spends $43.5 million. The two largest line items tell the story:"</p>
-            <p>"Water Purchases — $14.2 million. This is what Rochester Hills pays the Great Lakes Water Authority for raw water. GLWA raised their charges 5.8% — the city doesn't control that cost."</p>
-            <p>"Sewer Charges — $9.5 million to Oakland County for sewer service. They raised rates 9.9%. Again, a pass-through cost."</p>
-            <p>"Together, those two are $23.7 million — 55% of total fund expenses. When a citizen asks 'why did my bill go up?' — the answer is right here, in two clicks."</p>
+            <p>"Water Purchases &mdash; $14.2 million. This is what Rochester Hills pays the Great Lakes Water Authority for raw water. GLWA raised their charges 5.8% &mdash; the city doesn't control that cost."</p>
+            <p>"Sewer Charges &mdash; $9.5 million to Oakland County for sewer service. They raised rates 9.9%. Again, a pass-through cost."</p>
+            <p>"Together, those two are $23.7 million &mdash; 55% of total fund expenses. When a citizen asks 'why did my bill go up?' &mdash; the answer is right here, in two clicks."</p>
           </div>
           <div class="data-callout">
             <div class="data-callout-label">Key Expenditures</div>
             <ul>
-              <li><strong>Water Purchases (GLWA):</strong> $14.2M — 32.8% of fund</li>
-              <li><strong>Sewer Charges (Oakland Co.):</strong> $9.5M — 21.9%</li>
-              <li><strong>W&S Capital Transfers:</strong> $6.0M — 13.8%</li>
-              <li><strong>Salaries & Wages:</strong> $3.7M — 8.5%</li>
+              <li><strong>Water Purchases (GLWA):</strong> $14.2M &mdash; 32.8% of fund</li>
+              <li><strong>Sewer Charges (Oakland Co.):</strong> $9.5M &mdash; 21.9%</li>
+              <li><strong>W&amp;S Capital Transfers:</strong> $6.0M &mdash; 13.8%</li>
+              <li><strong>Salaries &amp; Wages:</strong> $3.7M &mdash; 8.5%</li>
             </ul>
           </div>
           <div class="objection-prep">
             <div class="objection-prep-label">Anticipate This Question</div>
-            <p><strong>"Why are rates going up 8.7%?"</strong> — GLWA +5.8%, Oakland County +9.9%, infrastructure investment, and maintaining 25% fund balance for operational stability. The city chose the "break-even option" — lowest rates possible while maintaining service.</p>
+            <p><strong>"Why are rates going up 8.7%?"</strong> &mdash; GLWA +5.8%, Oakland County +9.9%, infrastructure investment, and maintaining 25% fund balance for operational stability. The city chose the "break-even option" &mdash; lowest rates possible while maintaining service.</p>
           </div>
         </div>
       </div>
@@ -766,18 +1094,18 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>7</span></div>
           <div class="step-title">
-            <h3>Switch Chart Types — Show Flexibility</h3>
-            <div class="step-timing">~30 seconds &nbsp;|&nbsp; Quick toggle</div>
+            <h3>Switch Chart Types &mdash; Show Flexibility</h3>
+            <div class="step-timing">~30 seconds &nbsp;&bull;&nbsp; Quick toggle</div>
           </div>
         </div>
         <div class="step-body">
           <div class="nav-tip">
-            <span>🖱️</span>
+            <span>&#128433;</span>
             <div><strong>Click path:</strong> Toggle chart type buttons: Pie &rarr; Bar &rarr; Area</div>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"I can switch between chart types here — pie for composition, bar for comparison, area for trends over time. Each view tells a different part of the story."</p>
+            <p>"I can switch between chart types here &mdash; pie for composition, bar for comparison, area for trends over time. Each view tells a different part of the story."</p>
           </div>
         </div>
       </div>
@@ -786,36 +1114,36 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>8</span></div>
           <div class="step-title">
-            <h3>Navigate to Projects Tab — CIP Overview</h3>
-            <div class="step-timing">16:00 – 22:00 &nbsp;|&nbsp; Projects tab</div>
+            <h3>Navigate to Projects Tab &mdash; CIP Overview</h3>
+            <div class="step-timing">16:00 &ndash; 22:00 &nbsp;&bull;&nbsp; Projects tab</div>
           </div>
         </div>
         <div class="step-body">
           <div class="nav-tip">
-            <span>🖱️</span>
+            <span>&#128433;</span>
             <div><strong>Click path:</strong> Click "Projects" tab in portal navigation</div>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"Now let's look at Capital Improvement Projects. The city wants to compare spending across Water & Sewer, Parks & Recreation, and Major Road Construction on a multi-year basis."</p>
+            <p>"Now let's look at Capital Improvement Projects. The city wants to compare spending across Water &amp; Sewer, Parks &amp; Recreation, and Major Road Construction on a multi-year basis."</p>
             <p>"Rochester Hills has a $342 million, 6-year Capital Improvement Plan from 2025 to 2030."</p>
           </div>
           <div class="data-callout">
             <div class="data-callout-label">CIP Comparison Numbers</div>
             <ul>
-              <li><strong>Major Road Construction:</strong> $113.2M (33.1%) — leads all programs</li>
-              <li><strong>Water & Sewer Extensions:</strong> $82.1M (24.0%) — steady across all 6 years</li>
-              <li><strong>Parks & Recreation:</strong> $41.5M (12.1%) — facilities + trails</li>
+              <li><strong>Major Road Construction:</strong> $113.2M (33.1%) &mdash; leads all programs</li>
+              <li><strong>Water &amp; Sewer Extensions:</strong> $82.1M (24.0%) &mdash; steady across all 6 years</li>
+              <li><strong>Parks &amp; Recreation:</strong> $41.5M (12.1%) &mdash; facilities + trails</li>
               <li>These 3 programs = <strong>69.2%</strong> of entire 6-year capital plan</li>
             </ul>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Key Insight to Mention</div>
-            <p>"What makes this powerful for Council is the multi-year view. Major Road spending spikes dramatically in 2027-2028 — nearly $95 million across those two years. Water & Sewer investment, by contrast, is more evenly distributed. This helps Council explain to citizens why certain years have higher capital budgets."</p>
+            <p>"What makes this powerful for Council is the multi-year view. Major Road spending spikes dramatically in 2027&ndash;2028 &mdash; nearly $95 million across those two years. Water &amp; Sewer investment, by contrast, is more evenly distributed. This helps Council explain to citizens why certain years have higher capital budgets."</p>
           </div>
           <div class="nav-tip">
-            <span>💡</span>
-            <div><strong>Demo move:</strong> If available, click into an individual project to show descriptions, timelines, and funding sources. Say: "Citizens can click into specific projects to see details — this reduces FOIA requests."</div>
+            <span>&#128161;</span>
+            <div><strong>Demo move:</strong> If available, click into an individual project to show descriptions, timelines, and funding sources. Say: "Citizens can click into specific projects to see details &mdash; this reduces FOIA requests."</div>
           </div>
         </div>
       </div>
@@ -824,15 +1152,15 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>9</span></div>
           <div class="step-title">
-            <h3>Value Wrap-Up — Connect to Big Picture</h3>
-            <div class="step-timing">22:00 – 25:00 &nbsp;|&nbsp; Still in portal or flip back to slides</div>
+            <h3>Value Wrap-Up &mdash; Connect to Big Picture</h3>
+            <div class="step-timing">22:00 &ndash; 25:00 &nbsp;&bull;&nbsp; Still in portal or flip back</div>
           </div>
         </div>
         <div class="step-body">
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"Let me step back and connect this to the bigger picture. What we just did in 15 minutes — exploring revenue sources, understanding expenditure drivers, comparing capital investments across programs — would take a citizen HOURS with traditional PDF budget documents."</p>
-            <p>"Three things this delivers: First, Citizen Trust — when people can see where their money goes in an interactive, visual format, trust increases. Second, Council Communication — instead of explaining budget complexities verbally, send constituents a link. Third, Operational Efficiency — your finance team doesn't need to build custom reports. The portal IS the presentation."</p>
+            <p>"Let me step back and connect this to the bigger picture. What we just did in 15 minutes &mdash; exploring revenue sources, understanding expenditure drivers, comparing capital investments across programs &mdash; would take a citizen HOURS with traditional PDF budget documents."</p>
+            <p>"Three things this delivers: First, Citizen Trust &mdash; when people can see where their money goes in an interactive, visual format, trust increases. Second, Council Communication &mdash; instead of explaining budget complexities verbally, send constituents a link. Third, Operational Efficiency &mdash; your finance team doesn't need to build custom reports. The portal IS the presentation."</p>
           </div>
         </div>
       </div>
@@ -846,19 +1174,19 @@
         <div class="step-header" onclick="toggleStep(this)">
           <div class="step-num"><span>10</span></div>
           <div class="step-title">
-            <h3>Switch Back to Slides — Closing Slide</h3>
-            <div class="step-timing">25:00 – 28:00 &nbsp;|&nbsp; Slide 5</div>
+            <h3>Switch Back to Slides &mdash; Closing Slide</h3>
+            <div class="step-timing">25:00 &ndash; 28:00 &nbsp;&bull;&nbsp; Slide 5</div>
           </div>
           <a href="slides.html" target="_blank" class="step-action-btn">Open Slides &rarr;</a>
         </div>
         <div class="step-body">
           <div class="nav-tip">
-            <span>🖱️</span>
+            <span>&#128433;</span>
             <div><strong>Navigate:</strong> Switch back to slides tab &rarr; Press right arrow to reach Slide 5 (closing)</div>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"And with the recent merger between ClearGov and Gravity earlier this year, Rochester Hills now has access to a complete end-to-end platform — from operational budgeting to citizen transparency to capital project tracking — all from one partner."</p>
+            <p>"And with the recent merger between ClearGov and Gravity earlier this year, Rochester Hills now has access to a complete end-to-end platform &mdash; from operational budgeting to citizen transparency to capital project tracking &mdash; all from one partner."</p>
           </div>
         </div>
       </div>
@@ -868,18 +1196,18 @@
           <div class="step-num"><span>11</span></div>
           <div class="step-title">
             <h3>Share Takeaway Link &amp; Close</h3>
-            <div class="step-timing">28:00 – 30:00 &nbsp;|&nbsp; Final words</div>
+            <div class="step-timing">28:00 &ndash; 30:00 &nbsp;&bull;&nbsp; Final words</div>
           </div>
           <a href="takeaway.html" target="_blank" class="step-action-btn">Open Takeaway &rarr;</a>
         </div>
         <div class="step-body">
           <div class="talk-track">
             <div class="talk-track-label">Say This</div>
-            <p>"I've also prepared a data takeaway page with all the budget numbers we discussed today — the W&S Fund breakdown, rate changes, all 9 CIP programs, and the value proposition. I'll drop that link in the chat so you have it as a reference."</p>
+            <p>"I've also prepared a data takeaway page with all the budget numbers we discussed today &mdash; the W&amp;S Fund breakdown, rate changes, all 9 CIP programs, and the value proposition. I'll drop that link in the chat so you have it as a reference."</p>
           </div>
           <div class="talk-track">
             <div class="talk-track-label">Closing Statement</div>
-            <p>"Thank you all for your time and your thoughtful questions today. What I hope you take away is that Rochester Hills already has excellent financial data — the Transparency Portal simply makes that data accessible and explorable for every citizen in the community. I'm excited about the possibility of being part of the team that delivers this value to communities like Rochester Hills. Thank you."</p>
+            <p>"Thank you all for your time and your thoughtful questions today. What I hope you take away is that Rochester Hills already has excellent financial data &mdash; the Transparency Portal simply makes that data accessible and explorable for every citizen in the community. I'm excited about the possibility of being part of the team that delivers this value to communities like Rochester Hills. Thank you."</p>
           </div>
         </div>
       </div>
@@ -894,7 +1222,7 @@
           <div class="step-num"><span>12</span></div>
           <div class="step-title">
             <h3>Open for Questions</h3>
-            <div class="step-timing">30:00 – 35:00 &nbsp;|&nbsp; Let it flow naturally</div>
+            <div class="step-timing">30:00 &ndash; 35:00 &nbsp;&bull;&nbsp; Let it flow naturally</div>
           </div>
         </div>
         <div class="step-body">
@@ -905,32 +1233,32 @@
 
           <div class="objection-prep">
             <div class="objection-prep-label">Council Member May Ask</div>
-            <p><strong>"How does this help me when a constituent calls about their water bill?"</strong> — "Instead of explaining over the phone, you can say: go to the portal, click Water & Sewer Operating Fund, and see exactly where every dollar goes. Transforms a 20-min call into a 2-min conversation."</p>
+            <p><strong>"How does this help me when a constituent calls about their water bill?"</strong> &mdash; "Instead of explaining over the phone, you can say: go to the portal, click Water &amp; Sewer Operating Fund, and see exactly where every dollar goes. Transforms a 20-min call into a 2-min conversation."</p>
           </div>
 
           <div class="objection-prep" style="margin-top:10px;">
             <div class="objection-prep-label">Finance Director May Ask</div>
-            <p><strong>"How does this integrate with our accounting system?"</strong> — "Gravity is system-agnostic. You export your chart of accounts as CSV/Excel, ClearGov maps it to the portal. No API integration required, no IT infrastructure changes."</p>
+            <p><strong>"How does this integrate with our accounting system?"</strong> &mdash; "Gravity is system-agnostic. You export your chart of accounts as CSV/Excel, ClearGov maps it to the portal. No API integration required, no IT infrastructure changes."</p>
           </div>
 
           <div class="objection-prep" style="margin-top:10px;">
             <div class="objection-prep-label">IT Director May Ask</div>
-            <p><strong>"Do we need infrastructure?"</strong> — "No. Fully cloud-hosted SaaS at rochesterhills.opendata.report. No servers, no software, no patches. Your IT team doesn't touch it."</p>
+            <p><strong>"Do we need infrastructure?"</strong> &mdash; "No. Fully cloud-hosted SaaS at rochesterhills.opendata.report. No servers, no software, no patches. Your IT team doesn't touch it."</p>
           </div>
 
           <div class="objection-prep" style="margin-top:10px;">
             <div class="objection-prep-label">Concerned Citizen May Ask</div>
-            <p><strong>"Why did my water bill go up?"</strong> — Navigate to expenditure view live. "The largest cost is water from GLWA — $14.2M. GLWA raised rates 5.8%, Oakland County raised sewer rates 9.9%. These are pass-through costs the city doesn't control."</p>
+            <p><strong>"Why did my water bill go up?"</strong> &mdash; Navigate to expenditure view live. "The largest cost is water from GLWA &mdash; $14.2M. GLWA raised rates 5.8%, Oakland County raised sewer rates 9.9%. These are pass-through costs the city doesn't control."</p>
           </div>
 
           <div class="objection-prep" style="margin-top:10px;">
-            <div class="objection-prep-label">Mystery Guest — Universal Response</div>
+            <div class="objection-prep-label">Mystery Guest &mdash; Universal Response</div>
             <p>Don't panic. Ask them to introduce themselves. If you don't know the answer: <strong>"That's a great question. I want to give you an accurate answer rather than speculate. Let me follow up with our team on that specific detail."</strong></p>
           </div>
 
           <div class="nav-tip" style="margin-top:14px;">
-            <span>💡</span>
-            <div><strong>Objection framework:</strong> Acknowledge &rarr; Clarify &rarr; Respond &rarr; Confirm. Never get defensive. If Q&A ends early, don't fill silence — close confidently.</div>
+            <span>&#128161;</span>
+            <div><strong>Objection framework:</strong> Acknowledge &rarr; Clarify &rarr; Respond &rarr; Confirm. Never get defensive. If Q&amp;A ends early, don't fill silence &mdash; close confidently.</div>
           </div>
         </div>
       </div>
@@ -940,15 +1268,15 @@
   </div>
 
   <!-- Quick Reference Sidebar -->
-  <div class="quick-ref-toggle" onclick="toggleRef()">DATA REF</div>
+  <div class="quick-ref-toggle" onclick="toggleRef()">DATA REF &#9670;</div>
   <div class="quick-ref" id="quickRef">
     <button class="quick-ref-close" onclick="toggleRef()">&times;</button>
     <h3>Quick Reference</h3>
 
     <div class="ref-stat"><span class="label">Total City Revenue</span><span class="value">$186.3M</span></div>
-    <div class="ref-stat"><span class="label">W&S Operating Revenue</span><span class="value">$42.1M</span></div>
-    <div class="ref-stat"><span class="label">W&S % of All Funds</span><span class="value">22.6%</span></div>
-    <div class="ref-stat"><span class="label">W&S Expenditures</span><span class="value">$43.5M</span></div>
+    <div class="ref-stat"><span class="label">W&amp;S Operating Revenue</span><span class="value">$42.1M</span></div>
+    <div class="ref-stat"><span class="label">W&amp;S % of All Funds</span><span class="value">22.6%</span></div>
+    <div class="ref-stat"><span class="label">W&amp;S Expenditures</span><span class="value">$43.5M</span></div>
 
     <div class="ref-divider"></div>
     <h3>Top Revenue Lines</h3>
@@ -960,19 +1288,19 @@
     <div class="ref-stat"><span class="label">Water Purchases (GLWA)</span><span class="value">$14.2M</span></div>
     <div class="ref-stat"><span class="label">Sewer Charges (Oakland)</span><span class="value">$9.5M</span></div>
     <div class="ref-stat"><span class="label">Capital Transfers</span><span class="value">$6.0M</span></div>
-    <div class="ref-stat"><span class="label">Salaries & Wages</span><span class="value">$3.7M</span></div>
+    <div class="ref-stat"><span class="label">Salaries &amp; Wages</span><span class="value">$3.7M</span></div>
 
     <div class="ref-divider"></div>
     <h3>Rate Changes (July 2025)</h3>
-    <div class="ref-stat"><span class="label">Water per unit</span><span class="value">$6.67 → $7.80 (+17%)</span></div>
-    <div class="ref-stat"><span class="label">Sewer per unit</span><span class="value">$6.69 → $7.10 (+6.1%)</span></div>
+    <div class="ref-stat"><span class="label">Water per unit</span><span class="value">$6.67 &rarr; $7.80 (+17%)</span></div>
+    <div class="ref-stat"><span class="label">Sewer per unit</span><span class="value">$6.69 &rarr; $7.10 (+6.1%)</span></div>
     <div class="ref-stat"><span class="label">Avg residential impact</span><span class="value">~$90/yr (8.7%)</span></div>
 
     <div class="ref-divider"></div>
     <h3>6-Year CIP ($342M)</h3>
     <div class="ref-stat"><span class="label">Major Roads</span><span class="value">$113.2M (33.1%)</span></div>
-    <div class="ref-stat"><span class="label">Water & Sewer</span><span class="value">$82.1M (24.0%)</span></div>
-    <div class="ref-stat"><span class="label">Parks & Rec</span><span class="value">$41.5M (12.1%)</span></div>
+    <div class="ref-stat"><span class="label">Water &amp; Sewer</span><span class="value">$82.1M (24.0%)</span></div>
+    <div class="ref-stat"><span class="label">Parks &amp; Rec</span><span class="value">$41.5M (12.1%)</span></div>
 
     <div class="ref-divider"></div>
     <h3>Key Facts</h3>
@@ -981,6 +1309,13 @@
     <div class="ref-stat"><span class="label">Population</span><span class="value">~77,000</span></div>
     <div class="ref-stat"><span class="label">Portal pricing</span><span class="value">~$5,200/yr</span></div>
     <div class="ref-stat"><span class="label">Combined customers</span><span class="value">1,700+</span></div>
+  </div>
+
+  <!-- Keyboard hint -->
+  <div class="keyboard-hint">
+    <span><kbd>&darr;</kbd> <kbd>J</kbd> next</span>
+    <span><kbd>&uarr;</kbd> <kbd>K</kbd> prev</span>
+    <span><kbd>R</kbd> data ref</span>
   </div>
 
   <!-- Bottom Nav -->
@@ -1009,8 +1344,8 @@
 
           // Color warnings
           const el = document.getElementById('timer');
-          if (seconds > 30 * 60) el.style.color = '#ef4444';
-          else if (seconds > 25 * 60) el.style.color = '#f59e0b';
+          if (seconds > 30 * 60) el.style.color = '#f87171';
+          else if (seconds > 25 * 60) el.style.color = '#fbbf24';
           else el.style.color = '#00b4d8';
         }, 1000);
         btn.textContent = 'Pause';
@@ -1045,12 +1380,12 @@
     const allSteps = document.querySelectorAll('.step');
     const totalSteps = allSteps.length;
 
-    // Phase boundaries: which steps belong to which phase
+    // Phase boundaries
     const phaseBounds = [
-      [0, 2],   // Phase 0: steps 0-2
-      [3, 8],   // Phase 1: steps 3-8
-      [9, 10],  // Phase 2: steps 9-10
-      [11, 11]  // Phase 3: step 11
+      [0, 2],
+      [3, 8],
+      [9, 10],
+      [11, 11]
     ];
 
     function updateStepVisuals() {
@@ -1061,7 +1396,12 @@
       });
 
       document.getElementById('prevBtn').style.visibility = currentStep === 0 ? 'hidden' : 'visible';
-      document.getElementById('nextBtn').textContent = currentStep >= totalSteps - 1 ? 'Done' : 'Next Step →';
+      document.getElementById('nextBtn').textContent = currentStep >= totalSteps - 1 ? 'Done ✓' : 'Next Step →';
+
+      // Update progress bar
+      const pct = ((currentStep + 1) / totalSteps * 100).toFixed(1);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = `Step ${currentStep + 1} of ${totalSteps}`;
 
       // Auto-switch phase tab
       for (let p = 0; p < phaseBounds.length; p++) {

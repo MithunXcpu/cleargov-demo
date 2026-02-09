@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ClearGov Demo — Rochester Hills, MI</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --primary: #1a3a5c;
+    --bg: #06090f;
+    --surface: #0d1117;
+    --surface2: #161b22;
+    --surface3: #1c2333;
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(0,180,216,0.3);
+    --text: #e6edf3;
+    --text-muted: #7d8590;
     --accent: #00b4d8;
     --accent2: #0077b6;
-    --bg: #f1f5f9;
-    --surface: #ffffff;
-    --text: #1e293b;
-    --text-light: #64748b;
-    --border: #e2e8f0;
+    --accent-glow: rgba(0,180,216,0.15);
+    --gradient: linear-gradient(135deg, #00b4d8, #0077b6);
   }
 
   body {
@@ -24,251 +28,390 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    overflow-x: hidden;
   }
 
+  /* Animated background */
+  .bg-glow {
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(0,180,216,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .bg-glow-2 {
+    position: fixed;
+    bottom: -300px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,119,182,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Hero */
   .hero {
-    background: linear-gradient(135deg, #0f2439 0%, #1a3a5c 50%, #1e4d6e 100%);
-    color: white;
-    padding: 60px 24px;
-    text-align: center;
     position: relative;
-    overflow: hidden;
+    z-index: 1;
+    padding: 80px 24px 60px;
+    text-align: center;
   }
-
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -30%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,180,216,0.1) 0%, transparent 70%);
-  }
-
-  .hero-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
 
   .hero-badge {
-    display: inline-block;
-    background: rgba(0,180,216,0.15);
-    border: 1px solid rgba(0,180,216,0.3);
-    color: var(--accent);
-    padding: 4px 16px;
-    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-glow);
+    border: 1px solid rgba(0,180,216,0.2);
+    padding: 6px 18px;
+    border-radius: 100px;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+
+  .hero-badge .pulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,180,216,0.4); }
+    50% { opacity: 0.7; box-shadow: 0 0 0 6px rgba(0,180,216,0); }
   }
 
   .hero h1 {
-    font-size: clamp(28px, 5vw, 44px);
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 12px;
-    letter-spacing: -0.5px;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
   }
 
-  .hero h1 span { color: var(--accent); }
+  .hero h1 .gradient-text {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
 
-  .hero p {
-    font-size: 16px;
-    color: rgba(255,255,255,0.6);
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto 12px;
     line-height: 1.6;
   }
 
   .hero-meta {
-    margin-top: 20px;
-    font-size: 13px;
-    color: rgba(255,255,255,0.4);
     display: flex;
-    gap: 20px;
+    gap: 24px;
     justify-content: center;
     flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 20px;
   }
 
+  .hero-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-meta .dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+
+  /* Cards grid */
   .main {
-    flex: 1;
-    max-width: 900px;
-    margin: -40px auto 0;
-    padding: 0 20px 60px;
     position: relative;
-    z-index: 2;
-    width: 100%;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
   }
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  @media (max-width: 800px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 500px) {
+    .cards { grid-template-columns: 1fr; }
   }
 
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 16px;
-    padding: 32px 28px;
+    padding: 28px 24px;
     text-decoration: none;
     color: var(--text);
-    transition: all 0.25s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card::before {
     content: '';
     position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0,180,216,0.3), rgba(0,119,182,0.1), transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    right: 0;
+    height: 1px;
+    background: var(--gradient);
     opacity: 0;
-    transition: opacity 0.25s;
+    transition: opacity 0.35s;
   }
 
   .card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
-    border-color: var(--accent);
+    transform: translateY(-6px);
+    border-color: var(--border-hover);
+    box-shadow: 0 20px 60px -12px rgba(0,180,216,0.12), 0 0 0 1px rgba(0,180,216,0.1);
   }
 
   .card:hover::before { opacity: 1; }
+  .card:hover::after { opacity: 1; }
 
-  .card-icon {
-    font-size: 36px;
-    margin-bottom: 16px;
+  .card-featured {
+    background: linear-gradient(135deg, rgba(0,180,216,0.05) 0%, var(--surface) 60%);
+    border-color: rgba(0,180,216,0.15);
   }
+
+  .card-featured::after { opacity: 0.5; }
 
   .card-num {
     position: absolute;
-    top: 16px;
-    right: 20px;
-    font-size: 48px;
-    font-weight: 800;
-    color: rgba(0,180,216,0.07);
+    top: 14px;
+    right: 18px;
+    font-size: 42px;
+    font-weight: 900;
+    color: rgba(255,255,255,0.03);
+    line-height: 1;
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+  }
+
+  .card-featured .card-icon {
+    background: var(--accent-glow);
+    border-color: rgba(0,180,216,0.2);
   }
 
   .card h2 {
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
-    color: var(--primary);
+    color: var(--text);
     margin-bottom: 8px;
+    letter-spacing: -0.3px;
   }
 
   .card p {
-    font-size: 14px;
-    color: var(--text-light);
+    font-size: 13px;
+    color: var(--text-muted);
     line-height: 1.6;
     flex: 1;
   }
 
   .card-cta {
-    margin-top: 16px;
-    font-size: 13px;
+    margin-top: 18px;
+    font-size: 12px;
     font-weight: 600;
-    color: var(--accent2);
+    color: var(--accent);
     display: flex;
     align-items: center;
     gap: 6px;
+    transition: gap 0.25s;
   }
 
   .card:hover .card-cta { gap: 10px; }
 
+  .card-cta .arrow {
+    transition: transform 0.25s;
+    font-size: 14px;
+  }
+
+  .card:hover .card-cta .arrow { transform: translateX(3px); }
+
+  /* Info bar */
   .info-bar {
-    margin-top: 28px;
+    margin-top: 32px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
     font-size: 14px;
-    color: var(--text-light);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .info-bar strong { color: var(--text); }
+
+  .info-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0,180,216,0.08);
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
   }
 
-  .info-bar strong { color: var(--primary); }
+  .info-bar kbd {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: 'Inter', monospace;
+    color: var(--text);
+    font-weight: 600;
+  }
 
+  /* Footer */
   .footer {
+    position: relative;
+    z-index: 1;
     text-align: center;
-    padding: 24px;
+    padding: 32px 24px;
     font-size: 12px;
-    color: var(--text-light);
+    color: rgba(255,255,255,0.2);
+    border-top: 1px solid var(--border);
   }
 
-  .footer a { color: var(--accent2); text-decoration: none; }
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+
+  .footer a:hover { opacity: 1; }
 </style>
 </head>
 <body>
 
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
+
   <div class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">Solutions Engineer Demo</div>
-      <h1>Rochester Hills <span>Budget Transparency</span></h1>
-      <p>ClearGov x Gravity — Transparency Portal demonstration package for Rochester Hills, Michigan.</p>
-      <div class="hero-meta">
-        <span>Mithun Manjunatha</span>
-        <span>February 11, 2026</span>
-        <span>ClearGov x Gravity</span>
-      </div>
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      Solutions Engineer Demo
+    </div>
+    <h1>Rochester Hills<br><span class="gradient-text">Budget Transparency</span></h1>
+    <p class="hero-sub">ClearGov x Gravity — Transparency Portal demonstration package for Rochester Hills, Michigan.</p>
+    <div class="hero-meta">
+      <span>Mithun Manjunatha</span>
+      <span class="dot"></span>
+      <span>February 11, 2026</span>
+      <span class="dot"></span>
+      <span>ClearGov x Gravity</span>
     </div>
   </div>
 
   <div class="main">
-    <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+    <div class="cards">
 
-      <a href="clickpath.html" class="card" style="border-color: var(--accent); background: linear-gradient(135deg, rgba(0,180,216,0.03) 0%, var(--surface) 100%);">
-        <div class="card-num">★</div>
-        <div class="card-icon">🗺️</div>
+      <a href="clickpath.html" class="card card-featured">
+        <div class="card-num">&#9733;</div>
+        <div class="card-icon">&#128506;</div>
         <h2>Demo Click Path</h2>
-        <p>Step-by-step guided walkthrough with talk track, portal links, timer, and data reference. Your live co-pilot during the demo.</p>
-        <div class="card-cta">Open Click Path <span>-></span></div>
+        <p>Step-by-step guided walkthrough with talk track, timer, portal links, and data reference sidebar.</p>
+        <div class="card-cta">Open Click Path <span class="arrow">&rarr;</span></div>
       </a>
 
       <a href="slides.html" class="card">
         <div class="card-num">1</div>
-        <div class="card-icon">🎯</div>
+        <div class="card-icon">&#127919;</div>
         <h2>Presentation Slides</h2>
-        <p>5-slide deck with title, agenda, key data, live demo cue, and closing. Hidden speaker notes (press N).</p>
-        <div class="card-cta">Open Slides <span>-></span></div>
+        <p>5-slide deck with title, agenda, key data, live demo cue, and closing. Press <kbd>N</kbd> for notes.</p>
+        <div class="card-cta">Open Slides <span class="arrow">&rarr;</span></div>
       </a>
 
       <a href="https://rochesterhills.opendata.report" target="_blank" class="card">
         <div class="card-num">2</div>
-        <div class="card-icon">🌐</div>
+        <div class="card-icon">&#127760;</div>
         <h2>Live Portal</h2>
-        <p>Rochester Hills' Transparency Portal — interactive budget data, W&S Fund, CIP, drill-downs.</p>
-        <div class="card-cta">Open Portal <span>-></span></div>
+        <p>Rochester Hills Transparency Portal — interactive budget data, W&amp;S Fund, CIP, drill-downs.</p>
+        <div class="card-cta">Open Portal <span class="arrow">&rarr;</span></div>
       </a>
 
       <a href="takeaway.html" class="card">
         <div class="card-num">3</div>
-        <div class="card-icon">📊</div>
+        <div class="card-icon">&#128202;</div>
         <h2>Budget Takeaway</h2>
-        <p>Complete data reference — W&S Fund, rate changes, all 9 CIP programs. Your leave-behind.</p>
-        <div class="card-cta">Open Takeaway <span>-></span></div>
+        <p>Complete data reference — W&amp;S Fund, rate changes, all 9 CIP programs. Your leave-behind.</p>
+        <div class="card-cta">Open Takeaway <span class="arrow">&rarr;</span></div>
       </a>
 
     </div>
 
     <div class="info-bar">
-      <span style="font-size:20px;">💡</span>
+      <div class="info-icon">&#128161;</div>
       <div>
-        <strong>Demo flow:</strong> Start with Slides (Tell) — switch to Live Portal at Slide 4 (Show) — close with Slides and share Takeaway page (Tell). Arrow keys and Space navigate slides. Press N for hidden talk track.
+        <strong>Demo flow:</strong> Open <strong>Click Path</strong> on your second screen as your co-pilot. Share <strong>Slides</strong> on the call (Tell) &rarr; switch to <strong>Live Portal</strong> at Slide 4 (Show) &rarr; close with Slides and share <strong>Takeaway</strong> link (Tell). Use <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to navigate slides. Press <kbd>N</kbd> for hidden talk track.
       </div>
     </div>
   </div>
 
   <div class="footer">
-    Prepared for ClearGov Solutions Engineer interview &nbsp;|&nbsp; <a href="https://rochesterhills.opendata.report" target="_blank">rochesterhills.opendata.report</a>
+    Prepared for ClearGov Solutions Engineer interview &nbsp;&middot;&nbsp; <a href="https://rochesterhills.opendata.report" target="_blank">rochesterhills.opendata.report</a>
   </div>
 
 </body>
